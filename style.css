@@ -1,0 +1,91 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    text-align: center;
+    color: #333;
+    padding: 40px;
+  }
+  
+  h2, h3 {
+    color: #333;
+  }
+  
+  input, button {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+  }
+  
+  button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  #game, #login, #tutorial, #tutorial-prompt {
+    background-color: #ffffffd9;
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  #timer {
+    margin-top: 10px;
+    height: 20px;
+    background: #eee;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  #timer-fill {
+    height: 100%;
+    background: linear-gradient(to right, #ff6a00, #ee0979);
+    width: 100%;
+    transition: width 1s linear;
+  }
+  
+  #leaderboard p {
+    margin: 4px 0;
+    font-weight: bold;
+  }
+  .tutorial-prompt,
+.tutorial-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 3px solid #00aaff;
+  padding: 20px;
+  z-index: 99999; /* Make it very high to stay above everything */
+  width: 90%;
+  max-width: 400px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.tutorial-prompt button,
+.tutorial-box button {
+  margin: 10px 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #00aaff;
+  color: white;
+}
+
+  
+  
