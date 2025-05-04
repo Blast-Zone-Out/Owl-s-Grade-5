@@ -37,8 +37,10 @@ const questions = [
 
   function startGame() {
     username = document.getElementById("username").value;
-    if (!username) return alert("Please enter your name.");
-  
+    if (!username) {
+      showCustomAlert("Please enter your name.");
+      return;
+    }
     document.getElementById("login").style.display = "none";
     document.getElementById("game").style.display = "block";
   
@@ -117,7 +119,14 @@ function showQuestion() {
 }
 
 function submitAnswer() {
-    const userAnswer = parseInt(document.getElementById("answer").value);
+ 
+  const userAnswer = parseInt(document.getElementById("answer").value);
+
+  if (isNaN(userAnswer)) {
+    showCustomAlert("Please enter your answer.");
+    return;
+  }
+  
     const current = selectedQuestions[currentQuestion];
     userAnswers.push({
       question: `Round ${current.number} to the nearest ${current.roundTo}`,
@@ -161,7 +170,7 @@ function submitAnswer() {
       <p>❌ Incorrect! Need help? Would you like a tutorial?</p>
       <button id="yes-tutorial">✅ Step-by-Step Tutorial</button>
       <button id="no-tutorial">❌ No Thanks</button>
-      <a href="https://www.youtube.com/watch?v=uedvwH6Ay18" target="_blank" style="display: block; margin-top: 10px; color: blue; text-decoration: underline;">📺 Watch a Video Tutorial</a>
+      <a href="https://www.youtube.com/watch?v=pNfz-JU2cKE" target="_blank" style="display: block; margin-top: 10px; color: blue; text-decoration: underline;">📺 Watch a Video Tutorial</a>
     `;
     document.body.appendChild(promptBox);
   
@@ -178,6 +187,16 @@ function submitAnswer() {
       tick.play(); // ▶ Resume ticking
       nextQuestion();
     };
+  }
+  
+  function showCustomAlert(message, title = "Notice") {
+    document.getElementById("customAlertMessage").innerText = message;
+    document.querySelector("#customAlertContent h3").innerText = title;
+    document.getElementById("customAlert").style.display = "block";
+  }
+  
+  function closeCustomAlert() {
+    document.getElementById("customAlert").style.display = "none";
   }
   
   
@@ -231,51 +250,75 @@ function nextQuestion() {
 }
 
 function endGame() {
-    clearInterval(timer); // 🔁 Stop the timer
-    document.getElementById("tickSound").pause();
-    document.getElementById("tickSound").currentTime = 0;
-  
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-  
-    let resultHTML = `<h3>Game Over!</h3><p>Score: ${score}/10</p><h4>Results:</h4><ul>`;
-    userAnswers.forEach((entry, i) => {
-      const color = entry.userAnswer === entry.correctAnswer ? 'green' : 'red';
-      resultHTML += `<li>
-        Q${i+1}: ${entry.question}<br>
-        Your Answer: <span style="color:${color}">${entry.userAnswer}</span><br>
-        Correct Answer: ${entry.correctAnswer}
-      </li><br>`;
-    });
-    resultHTML += `</ul>`;
-  
-    // Add buttons
-    resultHTML += `
-  <button onclick="restartGame()">🔁 Play Again</button>
-  <button onclick="window.location.href='leaderboard.html'">📊 View Leaderboard</button>
-`;
+  clearInterval(timer);
+  document.getElementById("tickSound").pause();
+  document.getElementById("tickSound").currentTime = 0;
 
-  
-    alert(`Time's up or you've completed all questions! Your score is ${score}/10`);
-    saveToLeaderboard();
-  
-    const gameDiv = document.getElementById("game");
-    gameDiv.innerHTML = resultHTML;
-  }
-  
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+  });
+
+  document.getElementById("game").style.display = "none";
+  const resultDiv = document.getElementById("result");
+  resultDiv.style.display = "block";
+
+  let resultHTML = `<h3>Game Over!</h3><p>Score: ${score}/10</p><h4>Results:</h4><ul>`;
+  userAnswers.forEach((entry, i) => {
+    const color = entry.userAnswer === entry.correctAnswer ? 'green' : 'red';
+    resultHTML += `<li>
+      Q${i + 1}: ${entry.question}<br>
+      Your Answer: <span style="color:${color}">${entry.userAnswer}</span><br>
+      Correct Answer: ${entry.correctAnswer}
+    </li><br>`;
+  });
+  resultHTML += `</ul>`;
+
+  resultHTML += `
+    <button onclick="restartGame()">🔁 Play Again</button>
+    <button onclick="window.location.href='leaderboard.html'">📊 View Leaderboard</button>
+  `;
+
+  resultDiv.innerHTML = resultHTML;
+
+  showCustomAlert(`Time's up or you've completed all questions! Your score is ${score}/10`);
+
+  saveToLeaderboard(username, score); // ← Pass the username!
+}
+
+function closeCustomAlert() {
+  document.getElementById("customAlert").style.display = "none";
+} 
   
   
 
-function saveToLeaderboard() {
+function saveToLeaderboard(name, score) {
   let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  leaderboard.push({ name: username, score: score });
+
+  // Check if user already exists
+  const existingIndex = leaderboard.findIndex(entry => entry.name === name);
+
+  if (existingIndex !== -1) {
+    // Only update if new score is higher
+    if (score > leaderboard[existingIndex].score) {
+      leaderboard[existingIndex].score = score;
+    }
+  } else {
+    // Add new user entry
+    leaderboard.push({ name, score });
+  }
+
+  // Sort by highest score
   leaderboard.sort((a, b) => b.score - a.score);
+
+  // Optional: keep only top 5
   leaderboard = leaderboard.slice(0, 5);
+
+  // Save back to local storage
   localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
 }
+
 
 function displayLeaderboard() {
   const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
@@ -286,18 +329,20 @@ function displayLeaderboard() {
   });
 }
 function restartGame() {
-    // Reset everything and restart the game
-    clearInterval(timer);
-    document.getElementById("tickSound").pause();
-    document.getElementById("tickSound").currentTime = 0;
-  
-    document.getElementById("game").style.display = "none";
-    document.getElementById("login").style.display = "block";
-    document.getElementById("username").value = "";
-    score = 0;
-    currentQuestion = 0;
-    userAnswers = [];
-    isPaused = false;
-    selectedQuestions = [];
-  }
+  clearInterval(timer);
+  document.getElementById("tickSound").pause();
+  document.getElementById("tickSound").currentTime = 0;
+
+  document.getElementById("game").style.display = "none";
+  document.getElementById("result").style.display = "none";
+  document.getElementById("login").style.display = "block";
+  document.getElementById("username").value = "";
+
+  score = 0;
+  currentQuestion = 0;
+  userAnswers = [];
+  isPaused = false;
+  selectedQuestions = [];
+}
+
   

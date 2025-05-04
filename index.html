@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Time Attack Rounding Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
@@ -16,23 +19,34 @@
   </div>
 
   <div id="game" style="display:none;">
-    <h2>Round This Number</h2>
+    
     <div id="question"></div>
-    <input type="number" id="answer" placeholder="Enter Rounded Number" />
+    <div id="timer">Time Left: 60s</div>
+    
+    <input type="number" id="answer" placeholder="Enter your answer" />
     <button onclick="submitAnswer()">Submit</button>
-    <div id="timer"></div>
+    <div id="timer-bar"><div id="timer-fill"></div></div>
   </div>
+  
+
+<!-- New result container -->
+<div id="result" style="display:none;"></div>
 
  
 
-  <div id="timer">
-    <div id="timer-fill"></div>
-  </div>
-  
+
 
  
 
   <div id="leaderboard"></div>
+  <div id="customAlert" class="custom-alert">
+    <div class="custom-alert-content" id="customAlertContent">
+      <h3>Game Over!</h3>
+      <p id="customAlertMessage">Your score is X/10</p>
+      <button onclick="closeCustomAlert()">OK</button>
+    </div>
+  </div>
+  
 
   <script src="script.js"></script>
 
